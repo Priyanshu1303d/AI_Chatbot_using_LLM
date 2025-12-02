@@ -1,0 +1,31 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic>=2.7.4
+ipykernel
+transformers
+tokenizers
+
+# AI Clients
+openai>=1.12.0
+groq
+google-generativeai
+huggingface-hub
+
+# Utils
+tqdm
+numpy<2.0.0
+
+# LangChain Ecosystem (Matched versions)
+langgraph>=0.2.20
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-groq>=0.2.0
+langsmith>=0.1.0
+
+tqdm
+numpy<2.0.0
+
+# This installs your local src package in editable mode
+-e .
