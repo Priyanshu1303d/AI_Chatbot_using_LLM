@@ -41,6 +41,7 @@ files_to_create = [
 
     f"src/{project_name}/utils/__init__.py",
     f"src/{project_name}/utils/state.py",
+    f"src/{project_name}/utils/prompts.py",
     
     "research/trial.ipynb",
 ]
