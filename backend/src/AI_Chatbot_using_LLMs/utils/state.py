@@ -1,4 +1,5 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Annotated , List
+import operator
 
 class ChatState(TypedDict):
     """
@@ -9,3 +10,4 @@ class ChatState(TypedDict):
     provider: Literal["groq", "openai", "gemini", "hf"]
     prompt: str
     response: str
+    messages : Annotated[List[str], operator.add]

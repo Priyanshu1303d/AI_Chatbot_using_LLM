@@ -5,7 +5,6 @@ def sports_node(state: ChatState):
     """
     Prepares the prompt for sports analysis.
     """
-    query = state.get('user_query', '')
-    formatted_prompt = SPORTS_PROMPT.format(query=query)
+    formatted_prompt = SPORTS_PROMPT
     
     return {"prompt": formatted_prompt}

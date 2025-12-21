@@ -5,7 +5,6 @@ def legal_node(state: ChatState):
     """
     Prepares the prompt for legal queries with necessary disclaimers.
     """
-    query = state.get('user_query', '')
-    formatted_prompt = LEGAL_PROMPT.format(query=query)
+    formatted_prompt = LEGAL_PROMPT
     
     return {"prompt": formatted_prompt}

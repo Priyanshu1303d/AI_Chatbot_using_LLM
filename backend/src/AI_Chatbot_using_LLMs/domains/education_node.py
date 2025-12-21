@@ -5,7 +5,6 @@ def education_node(state: ChatState):
     """
     Prepares the prompt for education-related queries.
     """
-    query = state.get('user_query', '')
-    formatted_prompt = EDUCATION_PROMPT.format(query=query)
+    formatted_prompt = EDUCATION_PROMPT
     
     return {"prompt": formatted_prompt}
