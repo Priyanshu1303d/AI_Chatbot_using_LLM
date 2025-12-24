@@ -1,4 +1,14 @@
-# 🧠 AI Expert System - Intelligent Backend API
+---
+title: Domain Specific Chatbot Backend
+emoji: 🤖
+colorFrom: purple
+colorTo: indigo
+sdk: docker
+pinned: false
+app_port: 7860
+---
+
+# 🧠 AI Chatbot using LLM - Intelligent Backend API
 
 A high-performance, stateful backend architecture built with **FastAPI** and **LangGraph**. This system orchestrates domain-specific AI experts, manages persistent conversation memory, and enforces strict guardrails for production-grade reliability.
 
@@ -138,9 +148,9 @@ backend/
 │   │   ├── legal_node.py
 │   │   ├── medical_node.py
 │   │   └── sports_node.py
-    ├── prompts/          # Prompts logic nodes
+|   ├── prompts/          # Prompts logic nodes
 │   │   ├── education_prompt.py
-│   │   ├── legal_pronpt.py
+│   │   ├── legal_prompt.py
 │   │   ├── medical_prompt.py
 │   │   └── sports_prompt.py
 │   └── utils/
