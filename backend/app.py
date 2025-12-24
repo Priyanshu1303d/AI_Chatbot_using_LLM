@@ -11,12 +11,14 @@ app = FastAPI(
 )
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "https://ai-chatbot-using-llm.vercel.app",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = origins, # In production, replace with specific frontend URL
+    allow_origins = origins,
     allow_credentials = True,
     allow_methods = ["*"],
     allow_headers = ["*"]
