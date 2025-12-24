@@ -1,7 +1,6 @@
 # 🤖 AI Chatbot using LLM (Full Stack)
 
-> **Live Application:** [https://ai-chatbot-using-llm.vercel.app](https://ai-chatbot-using-llm.vercel.app)  
-> **Backend API:** [Deployed on Hugging Face Spaces](https://huggingface.co/spaces/Priyanshu1303d/domain-specific-chatbot-backend)
+> **Live Application:** [https://ai-chatbot-using-llm.vercel.app](https://ai-chatbot-using-llm.vercel.app)
 
 ## 📖 Overview
 
@@ -89,7 +88,3 @@ npm run dev
 ## 🤝 Contribution
 
 This project was developed as a comprehensive Full Stack AI Internship project, demonstrating advanced architecture in State Management, API Design, and UI/UX Engineering.
-
----
-
-*License: MIT*
