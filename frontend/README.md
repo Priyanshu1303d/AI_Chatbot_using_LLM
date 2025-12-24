@@ -1,36 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Expert System - Multi-Domain Chat Application
 
-## Getting Started
+A production-ready Next.js 14 chat application featuring domain-specific AI experts, multi-LLM provider support, and ChatGPT-style interface with persistent chat history.
 
-First, run the development server:
+![AI Expert System](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
+## ✨ Features
+
+### 🎯 Domain-Specific Expertise
+- **Education** - Academic and learning-related queries
+- **Legal** - Legal advice and information
+- **Medical** - Healthcare and medical questions
+- **Sports** - Sports-related discussions
+
+Each domain has:
+- Unique theme colors with smooth transitions
+- Specialized AI responses
+- Domain-specific prompt engineering
+
+### 🤖 Multi-LLM Provider Support
+Choose from 4 different AI providers:
+- **Groq** - Ultra-fast inference with Llama models
+- **OpenAI** - GPT-4 and GPT-3.5 Turbo
+- **Google Gemini** - Multimodal AI capabilities
+- **HuggingFace** - Open-source model ecosystem
+
+Switch providers instantly without losing context!
+
+### 💬 ChatGPT-Style Interface
+- **Persistent Chat History** - All conversations saved in localStorage
+- **Thread Management** - Create, view, and delete chat threads
+- **Delete on Hover** - ChatGPT-style delete buttons
+- **Welcome Screen** - Helpful onboarding for first-time users
+- **Empty State Handling** - Clean UX when no threads exist
+
+### 🎨 Premium UI/UX
+- **Glassmorphism Design** - Modern, translucent aesthetic
+- **Dark Theme** - Eye-friendly dark mode with vibrant accents
+- **Smooth Animations** - GSAP-powered transitions
+- **Responsive Layout** - Works on all screen sizes
+- **Transparent Scrollbars** - Clean, uncluttered interface
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ installed
+- Backend API running (see Backend Setup)
+- At least one LLM provider API key
+
+### Installation
+
+1. **Clone the repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Priyanshu1303d/AI_Chatbot_using_LLM
+cd frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install dependencies**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Set up environment variables**
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Edit `.env` and add your API keys:
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api/v1/chat
 
-## Learn More
+# Add at least one provider key
+GROQ_API_KEY=your_groq_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+HF_TOKEN=your_huggingface_token_here
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run the development server**
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Open your browser**
+```
+http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+See backend repository for setup instructions.
 
-## Deploy on Vercel
+## 📁 Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+frontend/
+├── app/
+│   ├── page.tsx              # Landing page with Hero
+│   ├── chat/
+│   │   └── page.tsx          # Main chat page
+│   ├── layout.tsx            # Root layout
+│   └── globals.css           # Global styles
+├── components/
+│   ├── Hero.tsx              # Landing page hero section
+│   ├── ChatInterface.tsx     # Main chat component
+│   ├── ChatHistorySidebar.tsx# Thread management sidebar
+│   ├── DomainSelector.tsx    # Domain selection UI
+│   ├── ProviderSelector.tsx  # LLM provider selection
+│   ├── MessageBubble.tsx     # Chat message display
+│   ├── DomainSwitchPrompt.tsx# Domain switch confirmation
+│   └── SmoothScroll.tsx      # Lenis scroll wrapper
+├── hooks/
+│   ├── useChat.ts            # Chat logic and API calls
+│   └── useTheme.ts           # Dynamic theming system
+├── types/
+│   └── chat.ts               # TypeScript interfaces
+└── .env.example              # Environment template
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Build for Production
+
+```bash
+npm run build
+npm run start
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License.

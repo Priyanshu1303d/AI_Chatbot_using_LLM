@@ -1,100 +1,108 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import axios from 'axios';
-import { Message, Domain, ChatRequest, ChatResponse } from '@/types/chat';
+import { Message, Domain, ChatRequest, ChatResponse, LLMProvider } from '@/types/chat';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1/chat';
 
-export const useChat = (initialDomain: Domain = 'Education') => {
+export const useChat = (initialDomain: Domain = 'Education', initialProvider: LLMProvider = 'groq') => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [currentDomain, setCurrentDomain] = useState<Domain>(initialDomain);
+    const [currentProvider, setCurrentProvider] = useState<LLMProvider>(initialProvider);
     const [isLoading, setIsLoading] = useState(false);
     const [pendingSwitch, setPendingSwitch] = useState<Domain | null>(null);
 
-    // Detect domain switch from response text
-    const detectDomainSwitch = (text: string): Domain | null => {
-        const switchPatterns = [
-            /Would you like to switch to (Education|Legal|Medical|Sports)/i,
-            /belongs to the (Education|Legal|Medical|Sports)/i,
-            /switch to (Education|Legal|Medical|Sports) expert/i,
-        ];
+    // Use refs to store latest values to avoid stale closures
+    const domainRef = useRef(currentDomain);
+    const providerRef = useRef(currentProvider);
 
-        for (const pattern of switchPatterns) {
-            const match = text.match(pattern);
-            if (match && match[1]) {
-                const detectedDomain = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
-                if (['Education', 'Legal', 'Medical', 'Sports'].includes(detectedDomain)) {
-                    return detectedDomain as Domain;
-                }
-            }
-        }
-        return null;
-    };
+    // Update refs whenever state changes
+    domainRef.current = currentDomain;
+    providerRef.current = currentProvider;
 
-    const sendMessage = useCallback(
-        async (query: string) => {
-            if (!query.trim() || isLoading) return;
+    // Message sending function using refs for latest values
+    const sendMessage = useCallback(async (query: string) => {
+        if (!query.trim()) return;
 
-            const userMessage: Message = {
-                id: Date.now().toString(),
-                role: 'user',
-                content: query,
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            role: 'user',
+            content: query,
+            timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, userMessage]);
+        setIsLoading(true);
+
+        try {
+            // Use refs to get the most current values
+            const payload: ChatRequest = {
+                query,
+                domain: domainRef.current.toLowerCase(),
+                provider: providerRef.current,
+                thread_id: 'default_user',
+            };
+
+            console.log('Sending payload with provider:', providerRef.current); // Debug log
+
+            const response = await axios.post<ChatResponse>(API_URL, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const assistantMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: response.data.response,
                 timestamp: new Date(),
             };
 
-            setMessages((prev) => [...prev, userMessage]);
-            setIsLoading(true);
+            setMessages((prev) => [...prev, assistantMessage]);
 
-            try {
-                const payload: ChatRequest = {
-                    query,
-                    domain: currentDomain.toLowerCase(),
-                    provider: 'groq',
-                    thread_id: 'default_user',
-                };
-
-                const response = await axios.post<ChatResponse>(API_URL, payload, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                const assistantMessage: Message = {
-                    id: (Date.now() + 1).toString(),
-                    role: 'assistant',
-                    content: response.data.response,
-                    timestamp: new Date(),
-                };
-
-                setMessages((prev) => [...prev, assistantMessage]);
-
-                // Check for domain switch suggestion
-                const suggestedDomain = detectDomainSwitch(response.data.response);
-                if (suggestedDomain && suggestedDomain !== currentDomain) {
-                    setPendingSwitch(suggestedDomain);
-                }
-            } catch (error) {
-                console.error('Chat API Error:', error);
-
-                const errorMessage: Message = {
-                    id: (Date.now() + 1).toString(),
-                    role: 'assistant',
-                    content: 'Sorry, I encountered an error. Please make sure the backend API is running at http://127.0.0.1:8000',
-                    timestamp: new Date(),
-                };
-
-                setMessages((prev) => [...prev, errorMessage]);
-            } finally {
-                setIsLoading(false);
+            // Check if response suggests domain switch
+            const suggestedDomain = detectDomainSwitch(response.data.response);
+            if (suggestedDomain && suggestedDomain !== domainRef.current) {
+                setPendingSwitch(suggestedDomain);
             }
-        },
-        [currentDomain, isLoading]
-    );
+        } catch (error: any) {
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: `Error: ${error.response?.data?.detail || error.message || 'Failed to get response'}`,
+                timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []); // Empty deps since we use refs
+
+    // Domain switch detection
+    const detectDomainSwitch = (response: string): Domain | null => {
+        const lowerResponse = response.toLowerCase();
+        const domains: Domain[] = ['Education', 'Legal', 'Medical', 'Sports'];
+
+        for (const domain of domains) {
+            const patterns = [
+                `would you like to switch to ${domain.toLowerCase()}`,
+                `belongs to the ${domain.toLowerCase()}`,
+                `switch to ${domain.toLowerCase()} domain`,
+            ];
+
+            if (patterns.some(pattern => lowerResponse.includes(pattern))) {
+                return domain;
+            }
+        }
+
+        return null;
+    };
 
     const confirmDomainSwitch = useCallback(() => {
         if (pendingSwitch) {
             setCurrentDomain(pendingSwitch);
+            domainRef.current = pendingSwitch;
             setPendingSwitch(null);
         }
     }, [pendingSwitch]);
@@ -105,18 +113,27 @@ export const useChat = (initialDomain: Domain = 'Education') => {
 
     const changeDomain = useCallback((domain: Domain) => {
         setCurrentDomain(domain);
+        domainRef.current = domain;
         setPendingSwitch(null);
+    }, []);
+
+    const changeProvider = useCallback((provider: LLMProvider) => {
+        console.log('Changing provider to:', provider); // Debug log
+        setCurrentProvider(provider);
+        providerRef.current = provider;
     }, []);
 
     return {
         messages,
         currentDomain,
+        currentProvider,
         isLoading,
         pendingSwitch,
         sendMessage,
         confirmDomainSwitch,
         dismissDomainSwitch,
         changeDomain,
+        changeProvider,
         setMessages,
     };
 };

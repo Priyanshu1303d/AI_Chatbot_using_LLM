@@ -6,36 +6,43 @@ import { applyTheme } from '@/hooks/useTheme';
 import MessageBubble from './MessageBubble';
 import DomainSwitchPrompt from './DomainSwitchPrompt';
 import DomainSelector from './DomainSelector';
+import ProviderSelector from './ProviderSelector';
 import { FiSend } from 'react-icons/fi';
 import { gsap } from 'gsap';
-import { Message, Domain } from '@/types/chat';
+import { Message, Domain, LLMProvider } from '@/types/chat';
 
 interface ChatInterfaceProps {
     threadId?: string;
     initialMessages?: Message[];
     initialDomain?: Domain;
+    initialProvider?: LLMProvider;
     onMessagesUpdate?: (messages: Message[]) => void;
     onDomainChange?: (domain: Domain) => void;
+    onProviderChange?: (provider: LLMProvider) => void;
 }
 
 export default function ChatInterface({
     threadId,
     initialMessages = [],
     initialDomain = 'Education',
+    initialProvider = 'groq',
     onMessagesUpdate,
     onDomainChange,
+    onProviderChange,
 }: ChatInterfaceProps) {
     const {
         messages,
         currentDomain,
+        currentProvider,
         isLoading,
         pendingSwitch,
         sendMessage,
         confirmDomainSwitch,
         dismissDomainSwitch,
         changeDomain,
+        changeProvider,
         setMessages: setInternalMessages,
-    } = useChat(initialDomain);
+    } = useChat(initialDomain, initialProvider);
 
     const [input, setInput] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -44,6 +51,13 @@ export default function ChatInterface({
     // Sync domain when thread changes - always update to match the thread's domain
     useEffect(() => {
         changeDomain(initialDomain);
+    }, [threadId]);
+
+    // Sync provider when thread changes
+    useEffect(() => {
+        if (initialProvider) {
+            changeProvider(initialProvider);
+        }
     }, [threadId]);
 
     // Initialize messages when thread changes
@@ -106,39 +120,52 @@ export default function ChatInterface({
         }
     };
 
+    const handleProviderChange = (provider: LLMProvider) => {
+        changeProvider(provider);
+        if (onProviderChange) {
+            onProviderChange(provider);
+        }
+    };
+
     return (
         <section className="h-screen w-full flex items-center justify-center py-8 px-4 bg-background overflow-hidden">
             <div
                 ref={chatContainerRef}
                 className="w-full max-w-7xl h-full glass rounded-3xl p-6 md:p-8 theme-glow flex flex-col"
             >
-                {/* Header with Domain Selector on Right */}
+                {/* Header with Selectors on Right */}
                 <div className="mb-6 pb-4 border-b border-foreground/10 flex items-start justify-between gap-8">
                     <div>
                         <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
                             Chat with AI Expert
                         </h2>
                         <p className="text-sm text-foreground/60">
-                            Current Domain:{' '}
+                            Domain:{' '}
                             <span className="text-[var(--theme-primary)] font-semibold">
                                 {currentDomain}
+                            </span>
+                            {' • '}
+                            Provider:{' '}
+                            <span className="text-[var(--theme-primary)] font-semibold">
+                                {currentProvider}
                             </span>
                         </p>
                     </div>
 
-                    {/* Domain Selector on Right Side */}
-                    <div className="flex-shrink-0">
+                    {/* Selectors on Right Side */}
+                    <div className="flex-shrink-0 flex flex-col gap-4">
                         <DomainSelector currentDomain={currentDomain} onDomainChange={handleDomainChange} />
+                        <ProviderSelector currentProvider={currentProvider} onProviderChange={handleProviderChange} />
                     </div>
                 </div>
 
                 {/* Messages Container with Transparent Scrollbar */}
                 <div className="flex-1 overflow-y-auto mb-6 pr-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                     <style jsx>{`
-                        div::-webkit-scrollbar {
-                            display: none;
-                        }
-                    `}</style>
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
                     {messages.length === 0 ? (
                         <div className="h-full flex items-center justify-center">
                             <div className="text-center">

@@ -7,6 +7,8 @@ export interface Message {
 
 export type Domain = 'Education' | 'Legal' | 'Medical' | 'Sports';
 
+export type LLMProvider = 'groq' | 'openai' | 'gemini' | 'hf';
+
 export interface ChatRequest {
   query: string;
   domain: string;
