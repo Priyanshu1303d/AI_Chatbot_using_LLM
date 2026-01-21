@@ -164,7 +164,7 @@ backend/
 
 ## ☁️ Deployment
 
-This project is optimized for **Hugging Face Spaces (Docker)** or **Render**.
+This project is optimized for **Hugging Face Spaces (Docker)**.
 
 ### Docker Deployment
 
@@ -197,3 +197,4 @@ docker run -p 7860:7860 --env-file .env ai-expert-backend
 ## 📝 License
 
 This project is licensed under the MIT License.
+
